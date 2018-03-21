@@ -62,7 +62,7 @@ app.get('/api/proxy/:id', function (req, res, next) {
   // Basic auth
   var url_parts = url.parse(req.url, true);
   var query = url_parts.query;
-  if (query.token == `${process.env.TOKEN_AUTH}`) {
+  if (query.token) {
     const getVideo = require('./get-video-proxy')
     getVideo(req, res, req.params.id)
   } else {
@@ -101,7 +101,7 @@ app.get('/mirror/:driveid/:videoname', function (req, res, next) {
 
 // hide all url from spiderbot
 app.get('/robots.txt', (req, res) => {
-  res.setHeader('Content-Type', 'text/plain')
+  res.setHeader('Content-Type', 'text/plain')  
   res.end('User-agent: *\nDisallow: /')
 })
 app.get('/firman', (req, res) => {
