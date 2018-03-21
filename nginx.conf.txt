@@ -1,0 +1,28 @@
+include /opt/kaltura/nginx/conf/main.conf;
+
+http {
+	include /opt/kaltura/nginx/conf/http.conf;
+
+	# file handle caching / aio
+	open_file_cache max=10000 inactive=5m;
+	open_file_cache_valid 2m;
+	open_file_cache_min_uses 1;
+	open_file_cache_errors on;
+	aio on;
+	proxy_cache_path /home/customer/drive/video/home/cache/ levels=1:2 keys_zone=my_cache_hdd1:521m max_size=10g inactive=12h use_temp_path=off;
+#	access_log  off;
+	error_log off;
+	limit_conn_zone $binary_remote_addr zone=connlimit:10m;
+	limit_conn_zone $binary_remote_addr zone=connlimit2:10m;
+	limit_req_zone $binary_remote_addr zone=connlimit21:10m rate=20r/s;
+	include   referrers.bad;
+	server {
+		listen 80;
+#		limit_conn connlimit 8;
+#		limit_rate 512k;
+		server_name 142.54.164.162;
+		include /opt/kaltura/nginx/conf/server.conf;
+	}
+
+	include /opt/kaltura/nginx/conf/ssl.conf;
+}

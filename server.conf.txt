@@ -1,0 +1,124 @@
+
+		# base locations
+		include /opt/kaltura/nginx/conf/base.conf;
+		location /api/googledrive/ {
+			proxy_set_header HOST $host;
+			proxy_set_header X-Forwarded-Proto $scheme;
+			proxy_set_header X-Real-IP $remote_addr;
+			proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+			proxy_pass http://localhost:5000/api/googledrive/;
+		}
+		# server node js videos
+		location /videos/apis/ {
+			limit_conn connlimit 8;
+			limit_rate 512k;
+			proxy_set_header HOST $host;
+			proxy_set_header X-Forwarded-Proto $scheme;
+			proxy_set_header X-Real-IP $remote_addr;
+			proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+			proxy_pass http://localhost:5000/videos/apis/;
+		}
+		location /hlsv2/ {
+			if ($bad_referer) {return 404;}
+			proxy_cache my_cache_hdd1;
+			limit_req zone=connlimit21 burst=5 nodelay;
+			limit_conn connlimit2 16;
+			limit_rate 1512k;
+                        proxy_pass http://127.0.0.1/hls/;
+                        proxy_set_header Host $host;
+                        proxy_cache_revalidate on;
+                        proxy_cache_min_uses 1;
+                        proxy_cache_use_stale error timeout updating http_500 http_502 http_503 http_504;
+                        proxy_cache_background_update on;
+                        proxy_cache_valid      200  1d;
+                        proxy_cache_lock on;
+                        add_header X-Cache-Status $upstream_cache_status;
+		}
+		location /thumb {
+			if ($bad_referer) {return 404;}
+        		vod thumb;
+        		vod_mode local;
+			alias /home/customer/drive/video/home/videos/;
+        		expires 100d;
+        		add_header Last-Modified "Sun, 19 Nov 2000 08:52:00 GMT";
+    		}
+
+		# serve flavor progressive
+		location /pd/ {
+			if ($bad_referer) {return 404;}
+			alias /home/customer/drive/video/home/videos/;
+			vod none;
+			limit_conn connlimit 8;
+			limit_rate 1524k;
+			directio 512;
+			output_buffers 1 512k;
+			include /opt/kaltura/nginx/conf/cors.conf;
+		}
+		location /pd2/ {
+			if ($bad_referer) {return 404;}
+			alias /home/customer/drive/video/home/videos/;
+			vod none;
+#			limit_conn connlimit 8;
+#			limit_rate 512k;
+			directio 512;
+			output_buffers 1 512k;
+
+			include /opt/kaltura/nginx/conf/cors.conf;
+		}
+
+		# serve flavor HLS
+		location /hls/ {
+			if ($bad_referer) {return 404;}
+			alias /home/customer/drive/video/home/videos/;
+			vod hls;
+			vod_bootstrap_segment_durations 30000;
+			vod_bootstrap_segment_durations 30000;
+			vod_bootstrap_segment_durations 30000;
+			vod_bootstrap_segment_durations 30000;
+			vod_align_segments_to_key_frames on;
+                        vod_expires 1h;
+			vod_segment_duration 30000;
+                        vod_segment_count_policy last_rounded;
+                        vod_manifest_segment_durations_mode accurate;
+#                       vod_segments_base_url http://dldramaid.b-cdn.net;
+                        vod_hls_absolute_index_urls off;
+
+			include /opt/kaltura/nginx/conf/cors.conf;
+		}
+
+		# serve flavor DASH
+		location /dash/ {
+			if ($bad_referer) {return 404;}
+			alias /home/customer/drive/video/;
+			vod dash;
+			vod_segment_duration 4000;
+			vod_dash_manifest_format segmenttemplate;
+			vod_manifest_duration_policy min;
+
+			include /opt/kaltura/nginx/conf/cors.conf;
+		}
+
+		# serve flavor HDS
+		location /hds/ {
+			alias /home/customer/drive/video/;
+			vod hds;
+			vod_segment_duration 6000;
+			vod_segment_count_policy last_rounded;
+
+			include /opt/kaltura/nginx/conf/cors.conf;
+		}
+
+		# serve flavor MSS
+		location /mss/ {
+			alias /home/customer/drive/video/;
+			vod mss;
+			vod_segment_duration 4000;
+			vod_manifest_segment_durations_mode accurate;
+
+			include /opt/kaltura/nginx/conf/cors.conf;
+		}
+
+		# static files (crossdomain.xml, robots.txt etc.) + fallback to api
+		location / {
+			root   html;
+		}
