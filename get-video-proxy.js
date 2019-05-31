@@ -13,7 +13,6 @@ const proxy = require('./proxy')
 
 module.exports = (req, res, docId,videoName) => {
   res.setHeader('Content-Type', 'application/json; charset=utf8')
-
   getVideoLink(docId)
   .then(
     response => ({
