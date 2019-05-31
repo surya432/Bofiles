@@ -20,7 +20,7 @@ const toProxyURL = (url, cookie) => {
     cookie,
     url
   }))
-  return `http://127.0.0.1:${process.env.PORT}/googledrive/videoplayback?hash=${hash}`
+  return `http://127.0.0.1/googledrive/videoplayback?hash=${hash}`
 }
 
 module.exports = {

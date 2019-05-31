@@ -11,13 +11,13 @@ const getVideoLink = require('./get-video-link')
 const extractVideos = require('./extract-video')
 const proxy = require('./proxy')
 
-module.exports = (req, res, docId) => {
+module.exports = (req, res, docId,videoName) => {
   res.setHeader('Content-Type', 'application/json; charset=utf8')
 
   getVideoLink(docId)
   .then(
     response => ({
-      'videos': extractVideos(response.body),
+      'videos': extractVideos(response.body,videoName),
       'driveCookieHeader': response.headers['set-cookie']
     })
   )

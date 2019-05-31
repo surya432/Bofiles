@@ -10,7 +10,7 @@
 const qs = require('querystring')
 const url = require('url')
 
-module.exports = (html) => {
+module.exports = (html,videoName) => {
   if (html === null) {
     throw new Error('Nothing from Google')
   }
@@ -28,7 +28,7 @@ module.exports = (html) => {
       label: getVideoResolution(itag) + 'p',
       type: 'video/mp4',
       src: toRedirectorURL(url),
-      originSrc: url + '&title=GoogleDriveVideo'
+      originSrc: url + '&title='+videoName
     }
     return result;
   })

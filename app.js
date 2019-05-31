@@ -64,7 +64,7 @@ app.get('/api/proxy/:id', function (req, res, next) {
   var query = url_parts.query;
   if (query.token) {
     const getVideo = require('./get-video-proxy')
-    getVideo(req, res, req.params.id)
+    getVideo(req, res, req.params.id,query.videoName)
   } else {
     res.setHeader('Content-Type', 'application/json; charset=utf8')
     const resultsource={
