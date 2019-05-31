@@ -33,7 +33,6 @@ module.exports = (req, res, docId,videoName) => {
           return video
         })
       })
-
       res.statusCode = 200
       res.setHeader('Content-Type', 'application/json; charset=utf8')
       return res.end(result)
