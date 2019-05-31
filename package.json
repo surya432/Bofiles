@@ -7,11 +7,14 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "NODE_ENV=production node app.js"
   },
+  "engines": {
+    "node": "10.x"
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "agentkeepalive": "^3.3.0",
-    "base64url": "^2.0.0",
+    "base64url": "^3.0.1",
     "body-parser": "^1.18.2",
     "cookie-parser": "^1.4.3",
     "crypto": "^1.0.1",
