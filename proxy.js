@@ -8,6 +8,7 @@
 'use strict'
 
 const base64 = require('base64url')
+const urls = require('./proxy')
 
 const createProxyVideo = (video, cookie) => {
   return Object.assign({}, video, {
@@ -20,7 +21,7 @@ const toProxyURL = (url, cookie) => {
     cookie,
     url
   }))
-  return `http://127.0.0.1/googledrive/videoplayback?hash=${hash}`
+  return `${process.env.VIRTUAL_HOST}/googledrive/videoplayback?hash=${hash}`
 }
 
 module.exports = {

@@ -23,6 +23,7 @@
     "fs": "0.0.1-security",
     "got": "^7.1.0",
     "pino": "^4.10.3",
+    "request": "^2.88.0",
     "wget": "0.0.1",
     "wget-improved": "^1.5.0"
   },
