@@ -10,9 +10,6 @@
   "engines": {
     "node": "10.x"
   },
-  "engines": {
-    "node": "10.x"
-  },
   "author": "",
   "license": "ISC",
   "dependencies": {
