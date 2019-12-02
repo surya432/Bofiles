@@ -1,0 +1,1 @@
+   Get-ChildItem  -Path "C:\Users\Administrator\Downloads\Bofiles-master\video" -Filter *.mp4 -Recurse -ErrorAction SilentlyContinue| Where-Object {($_.LastWriteTime -lt (Get-DATE).AddMinutes(-3))}| Remove-Item

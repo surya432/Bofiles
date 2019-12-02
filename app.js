@@ -6,11 +6,15 @@ const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const url = require("url");
 const fs = require("fs");
+let {spawn} = require ('child_process');
 var path = require("path");
 const qs = require("querystring");
 const base64 = require("base64url");
 const got = require("got");
 const handleError = require("./error-handler");
+const { exec } = require('child_process');
+const shell = require('node-powershell');
+
 app.use(function(req, res, next) {
   var allowedOrigins = [
     "http://127.0.0.1:8020",
@@ -27,6 +31,36 @@ app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
   res.header("Access-Control-Allow-Credentials", true);
   return next();
+});
+app.get("/video/:filename", function(req, res) {
+var path = __dirname + '/video/'+req.params.filename;
+     const stat = fs.statSync(path)
+  const fileSize = stat.size
+  const range = req.headers.range
+  if (range) {
+    const parts = range.replace(/bytes=/, "").split("-")
+    const start = parseInt(parts[0], 10)
+    const end = parts[1] 
+      ? parseInt(parts[1], 10)
+      : fileSize-1
+    const chunksize = (end-start)+1
+    const file = fs.createReadStream(path, {start, end})
+    const head = {
+      'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+      'Accept-Ranges': 'bytes',
+      'Content-Length': chunksize,
+      'Content-Type': 'video/mp4',
+    }
+    res.writeHead(206, head);
+    file.pipe(res);
+  } else {
+    const head = {
+      'Content-Length': fileSize,
+      'Content-Type': 'video/mp4',
+    }
+    res.writeHead(206, head)
+    fs.createReadStream(path).pipe(res)
+  }
 });
 app.get("/mp4/:id/:filename", function(req, res) {
   const headers = Object.assign({}, req.headers, { Server: "HR-KU-1" });
@@ -102,31 +136,28 @@ app.get("/videos/apis/:driveid/:videoname", function(req, res, next) {
   const getVideo = require("./googleapis");
   getVideo(req, res, req.params.driveid);
 });
+
+app.get("/sync", function(req, res, next) {
+	const ps = new shell({
+  verbose: true,
+  executionPolicy: 'Bypass',
+  noProfile: true,
+});
+	ps.addCommand(`& "${require('path').resolve(__dirname, 'delete.ps1')}"`);
+	ps.invoke().then(output => {
+	console.log(output);
+    ps.dispose();
+
+}).catch(err => {
+  console.log(err);
+  ps.dispose();
+});
+
+
+res.end("Ok");
+});
 app.get("/mirror/:driveid/:videoname", function(req, res, next) {
   const getmirror = require("./rapidvideo");
-  const uploadsDi2r = `${process.env.FOLDER_DIR}`;
-var uploadsDir = __dirname + '/video/';
-console.log(uploadsDir);
-    fs.readdir(uploadsDir, function(err, files) {
-    files.forEach(function(file, index) {
-      fs.stat(path.join(uploadsDir, file), function(err, stat) {
-        var endTime, now;
-        if (err) {
-          return console.error(err);
-        }
-        now = new Date().getTime();
-        endTime = new Date(stat.ctime).getTime() + 3600000;
-        if (now > endTime) {
-          return rimraf(path.join(uploadsDir, file), function(err) {
-            if (err) {
-              return console.error(err);
-            }
-            console.log("successfully deleted");
-          });
-        }
-      });
-    });
-  });
   getmirror(req, res, req.params.driveid, req.params.videoname);
 });
 app.get("/video/:filename", function(req, res) {

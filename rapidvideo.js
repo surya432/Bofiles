@@ -27,7 +27,7 @@ module.exports = (req, Response, docId, name_file) => {
             });
             download.on('end', function (output) {
                 console.log(output);
-                return Response.redirect(301, `http://${process.env.VIRTUAL_HOST}/${process.env.URL_VIDEO}/${name_file}`)
+                return Response.redirect(301, `http://${process.env.VIRTUAL_HOST}:${process.env.PORT}/${process.env.URL_VIDEO}/${name_file}`)
             });
         } catch (error) {
             console.log(error)
@@ -40,6 +40,6 @@ module.exports = (req, Response, docId, name_file) => {
             }))
         }
     } else {
-        return Response.redirect(301, `http://${process.env.VIRTUAL_HOST}/${process.env.URL_VIDEO}/${name_file}`)
+                return Response.redirect(301, `http://${process.env.VIRTUAL_HOST}:${process.env.PORT}/${process.env.URL_VIDEO}/${name_file}`)
     }
 }
