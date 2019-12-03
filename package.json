@@ -25,7 +25,8 @@
     "pino": "^4.10.3",
     "request": "^2.88.0",
     "wget": "0.0.1",
-    "wget-improved": "^1.5.0"
+    "wget-improved": "^1.5.0",
+    "node-powershell":"^4.0.0"
   },
   "devDependencies": {
     "cross-env": "^5.1.3"
