@@ -26,12 +26,12 @@ module.exports = (req, res, docId) => {
     return crypted;
   }
   const driveId = base64.decode(docId)
-  const video360 = `${process.env.FOLDER_DIR}/${encrypt(driveId)}.mp4`
+  const video360 = `${process.env.FOLDER_DIR}${docId}.mp4`
   if (!fs.existsSync(video360)) {
     var keyContent = fs.readFileSync('./array.txt').toString()
     var key = keyContent.split(",")
     var keys = key[Math.floor(Math.random() * key.length)];
-    const sourcesdownload = `https://www.googleapis.com/drive/v3/files/${driveId}?alt=media&key=${keys}`
+    const sourcesdownload = `https://www.googleapis.com/drive/v3/files/${docId}?alt=media&key=AIzaSyAkfDYvgwPurHsSqZ7ssGg-E_4BxUHh070	`
     try {
       var download = wget.download(sourcesdownload, video360);
       download.on('error', function (error) {
@@ -56,7 +56,7 @@ module.exports = (req, res, docId) => {
             label: "360p",
 //            type: 'video/mp4',
             default: true,
-            file: `http://${process.env.VIRTUAL_HOST}/${process.env.URL_VIDEO}/${encrypt(driveId)}.mp4${process.env.EXT_VIDEO}`,
+            file: `http://${process.env.VIRTUAL_HOST}/${process.env.URL_VIDEO}/${docId}.mp4${process.env.EXT_VIDEO}`,
           })
         }
         return res.end(
@@ -65,8 +65,8 @@ module.exports = (req, res, docId) => {
       });
     } catch (error) {
       console.log(error)
-      console.log(video360 + " Deleted");
-      fs.unlink(video360);
+      // console.log(video360 + " Deleted");
+      // fs.unlink(video360);
       res.statusCode = 200
       return res.end(JSON.stringify({
         status: 'FAIL',
@@ -86,7 +86,7 @@ module.exports = (req, res, docId) => {
         label: "360p",
 //        type: 'video/mp4',
         default: true,
-        file: `http://${process.env.VIRTUAL_HOST}/${process.env.URL_VIDEO}/${encrypt(driveId)}.mp4${process.env.EXT_VIDEO}`,
+        file: `http://${process.env.VIRTUAL_HOST}/${process.env.URL_VIDEO}/${docId}.mp4${process.env.EXT_VIDEO}`,
       })
     }
     return res.end(
