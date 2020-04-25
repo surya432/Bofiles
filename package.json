@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
-    "dev": "NODE_ENV=development nodemon app.js | pino",
+    "dev": "nodemon app.js | pino",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "NODE_ENV=production node app.js"
+    "start": "node app.js"
   },
   "engines": {
     "node": "10.x"
@@ -26,7 +26,7 @@
     "request": "^2.88.0",
     "wget": "0.0.1",
     "wget-improved": "^1.5.0",
-    "node-powershell":"^4.0.0"
+    "node-powershell": "^4.0.0"
   },
   "devDependencies": {
     "cross-env": "^5.1.3"
